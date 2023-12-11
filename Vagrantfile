@@ -1,0 +1,20 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-22.04"
+  config.vm.box_check_update = false
+  config.vm.provider "virtualbox"
+  # config.ssh.username = "vagrant"
+  # config.ssh.password = "vagrant"
+  config.vm.provider :virtualbox do |v|
+    v.memory = 1512
+  end
+  config.vm.hostname = "node1"
+  config.vm.network :private_network, ip: "192.168.56.56"
+  config.ssh.insert_key = true
+  config.vm.provision :ansible do |ansible|
+    ansible.playbook = "playbook.yml"
+    ansible.verbose = "vv"
+    ansible.become = false
+    # ansible.extra_vars = machine[:ansible_var]
+    # ansible.groups = { controlnode: 'vmnode0', allnodes: 'vmnode[0-100]' }
+  end
+end

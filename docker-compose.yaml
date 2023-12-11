@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  myapp:
+    image: docker.io/bitnami/laravel:8
+    # container_name: prod_myapp
+    mem_limit: 800M
+    mem_reservation: 128M
+    cpus: 0.8
+    restart: "always"
+    ports:
+      - '8888:8000'
+    volumes:
+      - './my-project/hello-world-laravel:/app'
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"

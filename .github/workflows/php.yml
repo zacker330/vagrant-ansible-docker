@@ -6,7 +6,8 @@ on:
       - '**'
     branches:
       - '**'
-
+permissions:
+  contents: write
 env:
   STAG_LIGHTSAIL_DEFAULT_KEY: ${{ secrets.STAG_LIGHTSAIL_DEFAULT_KEY }}
   STAG_LIGHTSAIL_HOST_IP: ${{ secrets.STAG_LIGHTSAIL_HOST_IP }}

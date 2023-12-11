@@ -42,6 +42,33 @@ jobs:
       - name: Remove node_modules
         run: cd my-project && rm -rf node_modules
 
+      - uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r laravel.zip my-project
+
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: true
+          prerelease: false
+          release_name: v${{ env.version }}
+          tag_name: v${{ env.version }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./laravel.zip
+          asset_name: laravel.zip
+          asset_content_type: application/gzip
+
+
       # - name: Create firebase_credential.json file
       #   run: |
       #     cd my-project && mkdir -p resources/credentials/

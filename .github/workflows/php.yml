@@ -1,0 +1,104 @@
+name: Staging Development
+
+on:
+  push:
+    tags-ignore:
+      - '**'
+    branches:
+      - '**'
+
+env:
+  STAG_LIGHTSAIL_DEFAULT_KEY: ${{ secrets.STAG_LIGHTSAIL_DEFAULT_KEY }}
+  STAG_LIGHTSAIL_HOST_IP: ${{ secrets.STAG_LIGHTSAIL_HOST_IP }}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: imagick, swoole
+
+      - name: Install deps
+        run: |
+          cd my-project
+          composer install
+          npm install
+
+      - name: Build front end
+        run: cd my-project && npm run production
+
+      - name: Remove node_modules
+        run: cd my-project && rm -rf node_modules
+
+      # - name: Create firebase_credential.json file
+      #   run: |
+      #     cd my-project && mkdir -p resources/credentials/
+      #     cd my-project && touch resources/credentials/firebase_credentials.json
+      #     cd my-project && echo "${{ secrets.STAG_FIREBASE_CREDENTIALS }}" > resources/credentials/firebase_credentials.json
+
+      - name: Create .env file
+        run: |
+          cd my-project && touch .env
+          echo "APP_NAME=ZenUML" >> .env
+          echo "APP_ENV=production" >> .env
+          echo "APP_KEY=${{ secrets.STAG_APP_KEY }}" >> .env
+          echo "APP_DEBUG=false" >> .env
+          echo "APP_URL=${{ vars.STAG_APP_URL }}" >> .env
+          echo "LOG_CHANNEL=${{ vars.STAG_LOG_CHANNEL }}" >> .env
+          echo "LOG_DEPRECATIONS_CHANNEL=" >> .env
+          echo "LOG_LEVEL=debug" >> .env
+          echo "DB_CONNECTION=${{ vars.STAG_DB_CONNECTION }}" >> .env
+          echo "DB_DATABASE=${{ vars.STAG_DB_DATABASE }}" >> .env
+          echo "DB_HOST=${{ secrets.STAG_DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.STAG_DB_PORT }}" >> .env
+          echo "DB_USERNAME=${{ secrets.STAG_DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.STAG_DB_PASSWORD }}" >> .env
+          echo "BROADCAST_DRIVER=${{ vars.STAG_BROADCAST_DRIVER }}" >> .env
+          echo "CACHE_DRIVER=${{ vars.STAG_CACHE_DRIVER }}" >> .env
+          echo "FILESYSTEM_DRIVER=${{ vars.STAG_FILESYSTEM_DRIVER }}" >> .env
+          echo "QUEUE_CONNECTION=${{ vars.STAG_QUEUE_CONNECTION }}" >> .env
+          echo "SESSION_DRIVER=${{ vars.STAG_SESSION_DRIVER }}" >> .env
+          echo "SESSION_LIFETIME=${{ vars.STAG_SESSION_LIFETIME }}" >> .env
+          echo "MEMCACHED_HOST=${{ vars.STAG_MEMCACHED_HOST }}" >> .env
+          echo "REDIS_HOST=${{ secrets.STAG_REDIS_HOST }}" >> .env
+          echo "REDIS_PASSWORD=${{ secrets.STAG_REDIS_PASSWORD }}" >> .env
+          echo "REDIS_PORT=${{ secrets.STAG_REDIS_PORT }}" >> .env
+          echo "MAIL_MAILER=${{ vars.STAG_MAIL_MAILER }}" >> .env
+          echo "MAIL_HOST=${{ vars.STAG_MAIL_HOST }}" >> .env
+          echo "MAIL_PORT=${{ vars.STAG_MAIL_PORT }}" >> .env
+          echo "MAIL_USERNAME=${{ secrets.STAG_MAIL_USERNAME }}" >> .env
+          echo "MAIL_PASSWORD=${{ secrets.STAG_MAIL_PASSWORD }}" >> .env
+          echo "MAIL_ENCRYPTION=${{ secrets.STAG_MAIL_ENCRYPTION }}" >> .env
+          echo "MAIL_FROM_ADDRESS=${{ secrets.STAG_MAIL_FROM_ADDRESS }}" >> .env
+          echo "MAIL_FROM_NAME=${{ env.APP_NAME }}" >> .env
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.STAG_AWS_ACCESS_KEY_ID }}" >> .env
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.STAG_AWS_SECRET_ACCESS_KEY }}" >> .env
+          echo "AWS_DEFAULT_REGION=${{ secrets.STAG_AWS_DEFAULT_REGION }}" >> .env
+          echo "AWS_BUCKET=${{ secrets.STAG_AWS_BUCKET }}" >> .env
+          echo "AWS_USE_PATH_STYLE_ENDPOINT=${{ secrets.STAG_AWS_USE_PATH_STYLE_ENDPOINT }}" >> .env
+          echo "PUSHER_APP_ID=${{ secrets.STAG_PUSHER_APP_ID }}" >> .env
+          echo "PUSHER_APP_KEY=${{ secrets.STAG_PUSHER_APP_KEY }}" >> .env
+          echo "PUSHER_APP_SECRET=${{ secrets.STAG_PUSHER_APP_SECRET }}" >> .env
+          echo "PUSHER_APP_CLUSTER=${{ secrets.STAG_PUSHER_APP_CLUSTER }}" >> .env
+          echo "MIX_PUSHER_APP_KEY=${{ secrets.STAG_PUSHER_APP_KEY }}" >> .env
+          echo "MIX_PUSHER_APP_CLUSTER=${{ secrets.STAG_PUSHER_APP_CLUSTER }}" >> .env
+          echo "WEIXINWEB_CLIENT_ID=${{ secrets.STAG_WEIXINWEB_CLIENT_ID }}" >> .env
+          echo "WEIXINWEB_CLIENT_SECRET=${{ secrets.STAG_WEIXINWEB_CLIENT_SECRET }}" >> .env
+          echo "WEIXINWEB_REDIRECT_URI=${{ secrets.STAG_WEIXINWEB_REDIRECT_URI }}" >> .env
+          echo "ADMIN_USER_EMAIL=${{ secrets.STAG_ADMIN_USER_EMAIL }}" >> .env
+          echo "ADMIN_USER_PASSWORD=${{ secrets.STAG_ADMIN_USER_PASSWORD}}" >> .env
+          echo "FIREBASE_CREDENTIALS=resources/credentials/firebase_credentials.json" >> .env
+
+    

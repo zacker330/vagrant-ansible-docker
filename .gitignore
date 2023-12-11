@@ -1,6 +1,15 @@
 # Created by https://www.toptal.com/developers/gitignore/api/vagrant,macos,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=vagrant,macos,vim
 
+.cache
+.pip
+.local
+.vagrant
+.bash*
+.viminfo
+.python_history
+.sudo_as*
+
 ### macOS ###
 # General
 .DS_Store

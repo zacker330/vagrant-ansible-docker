@@ -1,0 +1,34 @@
+---
+- name: ensure app_home exists
+  ansible.builtin.file:
+    path: "{{app_home}}"
+    owner: "{{app_user}}"
+    group: "{{app_group}}"
+    mode: u=rw,g=r,o=r
+    state: directory
+
+# tasks file for larasite
+- name: template docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yaml.j2
+    dest: "{{app_home}}/docker-compose.yaml"
+    owner: "{{app_user}}"
+    group: "{{app_group}}"
+    mode: u=rw,g=r,o=r
+
+
+- name: copy source to  {{app_home}}
+  ansible.builtin.copy:
+    src: my-project
+    dest: "{{app_home}}"
+    owner: "{{app_user}}"
+    group: "{{app_group}}"
+    mode: u=rw,g=r,o=r
+
+- name: start services
+  docker_compose:
+    project_src: "{{app_home}}"
+  register: output
+
+- debug:
+    var: output

@@ -1,0 +1,29 @@
+
+- hosts: {{ app_host | default("127.0.0.1") }}
+  gather_facts: yes
+  become: true
+  vars:
+    app_home: "/home/vagrant/apps"
+    app_user: vagrant
+    app_group: vagrant
+    ansible_user: vagrant
+    ansible_password: vagrant
+    docker_service_manage: true
+    docker_service_state: started
+    docker_service_enabled: true
+    docker_install_compose: true
+    docker_compose_version: "v2.23.2"
+    docker_compose_arch: "{{ ansible_architecture }}"
+    docker_compose_path: /usr/local/bin/docker-compose
+    # docker_compose_url: "http://192.168.0.106:8081/repository/everything/docker/2.23.2/docker-compose-linux-x86_64"
+    pip_install_packages:
+    - name: docker
+      version: "4.4.4"
+    - name: docker-compose
+      version: "1.29.2"  
+    # - name: awscli
+    #   version: "1.31.11"
+  roles:
+    - ansible-role-pip
+    - ansible-role-docker
+    - laravel

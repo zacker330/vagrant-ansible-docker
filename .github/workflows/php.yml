@@ -45,28 +45,48 @@ jobs:
       - uses: montudor/action-zip@v1
         with:
           args: zip -qq -r laravel.zip my-project
+          
+      - name: Export Properties
+        id: properties
+        shell: bash
+        run: |
+          VERSION="$(echo $(date +'%Y.%m.%d%H%M'))"
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "repo_name=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+      # - name: release
+      #   uses: actions/create-release@v1
+      #   id: create_release
+      #   with:
+      #     draft: true
+      #     prerelease: false
+      #     release_name: v${{ env.version }}
+      #     tag_name: v${{ env.version }}
+      #     body_path: CHANGELOG.md
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
 
-      - name: release
-        uses: actions/create-release@v1
-        id: create_release
+
+      - name: Release
+        id: createDraft
+        uses: softprops/action-gh-release@v1
         with:
-          draft: true
-          prerelease: false
-          release_name: v${{ env.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: v${{ env.version }}
-          body_path: CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+          name: v${{ env.version }}
+          body: This is a draft release for ${{env.repo_name}}
+          draft: true
+          files: |
+            laravel.zip
 
-      - name: upload artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./laravel.zip
-          asset_name: laravel.zip
-          asset_content_type: application/gzip
+      # - name: upload artifact
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./laravel.zip
+      #     asset_name: laravel.zip
+      #     asset_content_type: application/gzip
 
 
       # - name: Create firebase_credential.json file

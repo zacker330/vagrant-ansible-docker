@@ -38,7 +38,7 @@ jobs:
 
       - uses: montudor/action-zip@v1
         with:
-          args: unzip -qq ${{ env.DEVOPS_ANSIBLE_NAME }} -d devops
+          args: unzip -qq ${GITHUB_WORKSPACE}/${{ env.DEVOPS_ANSIBLE_NAME }} -d devops
 
       - name: deploy
         uses: dawidd6/action-ansible-playbook@v2
@@ -46,7 +46,7 @@ jobs:
           # Required, playbook filepath
           playbook: playbook.yml
           # Optional, directory where playbooks live
-          directory: ./devops
+          directory: ${GITHUB_WORKSPACE}/devops
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
           options: |

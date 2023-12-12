@@ -53,8 +53,8 @@ jobs:
         run: cd my-project && rm -rf node_modules
 
       - uses: montudor/action-zip@v1
-        with:
-          args: cd my-project/ && zip -qq -r ${{ env.artifactName }} *
+        working-directory: "my-project"
+        run: zip -qq -r ${{ env.artifactName }} *
 
       - name: create a prerelease
         id: createDraft

@@ -3,11 +3,7 @@
   gather_facts: yes
   become: true
   vars:
-    app_home: "/home/vagrant/apps"
-    app_user: vagrant
-    app_group: vagrant
-    ansible_user: vagrant
-    ansible_password: vagrant
+
     docker_service_manage: true
     docker_service_state: started
     docker_service_enabled: true

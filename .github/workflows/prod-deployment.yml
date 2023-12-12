@@ -6,6 +6,8 @@ on:
 env:
   PROD_LIGHTSAIL_DEFAULT_KEY: ${{ secrets.PROD_LIGHTSAIL_DEFAULT_KEY }}
   PROD_LIGHTSAIL_HOST_IP: ${{ secrets.PROD_LIGHTSAIL_HOST_IP }}
+  ARTIFACT_VERSION: ${{github.event.release.tag_name}}
+  ARTIFACT_NAME: laravel-${{github.event.release.tag_name}}.zip
 
 jobs:
   release:
@@ -21,7 +23,7 @@ jobs:
         with:
           version: "${{ github.event.release.id }}"
           file: 'laravel.zip'
-          target: '${GITHUB_WORKSPACE}/laravel.zip'
+          target: '${GITHUB_WORKSPACE}/${{ARTIFACT_NAME}}'
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: run ansible
         uses: dawidd6/action-ansible-playbook@v2
@@ -34,5 +36,5 @@ jobs:
           key: ${{secrets.SSH_PRIVATE_KEY}}
           options: |
             --inventory prod.hosts.yaml
-            --extra-vars lavavel_zip_path=${GITHUB_WORKSPACE}/laravel.zip
+            --extra-vars lavavel_zip_path=${GITHUB_WORKSPACE}/${{ARTIFACT_NAME}}
           

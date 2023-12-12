@@ -32,6 +32,7 @@ jobs:
           VERSION="$(echo $(date +'%Y.%m.%d%H%M'))"
           echo "version=$VERSION" >> $GITHUB_ENV
           echo "artifactName=laravel-$VERSION.zip" >> $GITHUB_ENV
+          echo "devopsName=devops-$VERSION.zip" >> $GITHUB_ENV
           echo "repo_name=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
       - name: Setup PHP with PECL extension
@@ -52,9 +53,15 @@ jobs:
       - name: Remove node_modules
         run: cd my-project && rm -rf node_modules
 
-      - uses: montudor/action-zip@v1
+      - name: package laravel
+        uses: montudor/action-zip@v1
         working-directory: "my-project"
         run: zip -qq -r ${{ env.artifactName }} *
+
+      - name: package devops
+        uses: montudor/action-zip@v1
+        working-directory: "devops"
+        run: zip -qq -r ${{ env.devopsName }} *
 
       - name: create a prerelease
         id: createDraft

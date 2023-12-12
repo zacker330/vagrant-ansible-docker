@@ -76,8 +76,8 @@ jobs:
           name: v${{ env.version }}
           body: This is a draft release for ${{env.repo_name}}
           draft: true
-          files: |
-            laravel.zip
+          # files: |
+          #   laravel.zip
 
       # - name: upload artifact
       #   uses: actions/upload-release-asset@v1

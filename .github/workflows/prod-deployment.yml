@@ -21,8 +21,18 @@ jobs:
         with:
           version: "${{ github.event.release.id }}"
           file: 'laravel.zip'
+          target: '${GITHUB_WORKSPACE}/laravel.zip'
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: run ansible
-        uses: tomasnorre/ansible-cli-client@v0.0.7
+        uses: dawidd6/action-ansible-playbook@v2
         with:
-          command: "ansible --version"
+          # Required, playbook filepath
+          playbook: playbook.yml
+          # Optional, directory where playbooks live
+          directory: ./devops
+          # Optional, SSH private key
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          options: |
+            --inventory prod.hosts.yaml
+            --extra-vars lavavel_zip_path=${GITHUB_WORKSPACE}/laravel.zip
+          

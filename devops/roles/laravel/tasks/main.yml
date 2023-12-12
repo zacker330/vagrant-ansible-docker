@@ -1,4 +1,17 @@
 ---
+- name: copy laravel.zip
+  ansible.builtin.copy:
+    src: "{{ lavavel_zip_path }}"
+    dest: "{{ app_home }}"
+    owner: "{{app_user}}"
+    group: "{{app_group}}"
+    mode: u=rw,g=r,o=r
+
+- name: extract laravel
+  ansible.builtin.unarchive:
+    src: "{{ lavavel_zip_path }}"
+    dest: "{{ app_home }}"
+
 - name: ensure app_home exists
   ansible.builtin.file:
     path: "{{app_home}}"
@@ -12,15 +25,6 @@
   ansible.builtin.template:
     src: docker-compose.yaml.j2
     dest: "{{app_home}}/docker-compose.yaml"
-    owner: "{{app_user}}"
-    group: "{{app_group}}"
-    mode: u=rw,g=r,o=r
-
-
-- name: copy source to  {{app_home}}
-  ansible.builtin.copy:
-    src: my-project
-    dest: "{{app_home}}"
     owner: "{{app_user}}"
     group: "{{app_group}}"
     mode: u=rw,g=r,o=r

@@ -75,7 +75,8 @@ jobs:
           tag_name: v${{ env.version }}
           name: v${{ env.version }}
           body: This is a draft release for ${{env.repo_name}}
-          draft: true
+          draft: false
+          prerelease: true
           files: |
             laravel.zip
 

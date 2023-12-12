@@ -29,7 +29,7 @@ jobs:
         id: properties
         shell: bash
         run: |
-          VERSION="$(echo $(date +'%Y.%m.%d%H%M'))"
+          VERSION="$(echo $(date +'v%Y.%m.%d%H%M'))"
           echo "version=$VERSION" >> $GITHUB_ENV
           echo "artifactName=laravel-$VERSION.zip" >> $GITHUB_ENV
           echo "devopsName=devops-$VERSION.zip" >> $GITHUB_ENV
@@ -68,8 +68,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: v${{ env.version }}
-          name: v${{ env.version }}
+          tag_name: ${{ env.version }}
+          name: ${{ env.version }}
           body: This is a pre-release for ${{env.repo_name}}
           draft: false
           prerelease: true

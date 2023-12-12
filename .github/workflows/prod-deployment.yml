@@ -6,7 +6,7 @@ on:
 env:
   PROD_LIGHTSAIL_DEFAULT_KEY: ${{ secrets.PROD_LIGHTSAIL_DEFAULT_KEY }}
   PROD_LIGHTSAIL_HOST_IP: ${{ secrets.PROD_LIGHTSAIL_HOST_IP }}
-  ARTIFACT_VERSION: ${{github.event.release.tag_name}}
+  ARTIFACT_VERSION: "${{github.event.release.tag_name}}"
   ARTIFACT_NAME: laravel-${{github.event.release.tag_name}}.zip
   DEVOPS_ANSIBLE_NAME: devops-${{github.event.release.tag_name}}.zip
 

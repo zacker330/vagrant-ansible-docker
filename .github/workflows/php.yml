@@ -53,13 +53,14 @@ jobs:
       - name: Remove node_modules
         run: cd my-project && rm -rf node_modules
 
-      - name: package laravel
+      - name: use action-zip
         uses: montudor/action-zip@v1
+
+      - name: package laravel
         working-directory: "my-project"
         run: zip -qq -r ${{ env.artifactName }} *
 
       - name: package devops
-        uses: montudor/action-zip@v1
         working-directory: "devops"
         run: zip -qq -r ${{ env.devopsName }} *
 
@@ -75,5 +76,6 @@ jobs:
           prerelease: true
           files: |
             ${{ env.artifactName }}
+            ${{ env.devopsName }}
 
     

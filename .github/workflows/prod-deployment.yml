@@ -51,5 +51,5 @@ jobs:
           key: ${{secrets.SSH_PRIVATE_KEY}}
           options: |
             --inventory prod.hosts.yaml
-            --extra-vars lavavel_zip_path=${GITHUB_WORKSPACE}/${{env.ARTIFACT_NAME}} app_home="/apps/larasite/${{env.ARTIFACT_VERSION}}"
+            --extra-vars lavavel_zip_path=${GITHUB_WORKSPACE}/${{env.ARTIFACT_NAME}} docker_compose_home="/apps/larasite" app_home="/apps/larasite/${{env.ARTIFACT_VERSION}}"
           

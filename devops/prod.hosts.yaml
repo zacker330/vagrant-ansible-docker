@@ -19,8 +19,9 @@ all: # keys must be unique, i.e. only one 'hosts' per group
                 cpus: 0.8
                 restart: "always"
                 ports:
-                    - '8888:8000'
+                - '8888:8000'
                 volumes:
-                    - '{{app_home}}/:/app'
+                - '{{app_home}}/:/app'
+                - "{{docker_compose_home}}/logs:/app/storage/logs/"
                 # extra_hosts:
                 #   - "host.docker.internal:host-gateway"

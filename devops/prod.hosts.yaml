@@ -7,4 +7,20 @@ all: # keys must be unique, i.e. only one 'hosts' per group
         app_group: ubuntu
         # 靠环境变量传递
         # lavavel_zip_path: ''
-        # app_home: ""
+        app_home: ""
+        lara_docker_compose:
+            version: '3'
+            services:
+                myapp:
+                image: docker.io/bitnami/laravel:8
+                # container_name: prod_myapp
+                mem_limit: 800M
+                mem_reservation: 128M
+                cpus: 0.8
+                restart: "always"
+                ports:
+                    - '8888:8000'
+                volumes:
+                    - '{{app_home}}/:/app'
+                # extra_hosts:
+                #   - "host.docker.internal:host-gateway"

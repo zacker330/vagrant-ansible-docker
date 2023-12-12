@@ -1,8 +1,10 @@
 all: # keys must be unique, i.e. only one 'hosts' per group
     hosts:
-        ip1: 128.0.0.1
+        127.0.0.1
     vars:
-        app_home: "/apps/larasite"
+        docker_compose_home: "/apps/larasite"
         app_user: ubuntu
         app_group: ubuntu
-        lavavel_zip_path: ''
+        # 靠环境变量传递
+        # lavavel_zip_path: ''
+        # app_home: ""

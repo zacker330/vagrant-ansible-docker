@@ -1,7 +1,5 @@
 ---
 # defaults file for larasite
-app_user: ubuntu
-app_group: ubuntu
 lara_docker_compose:
   version: '3'
   services:
@@ -15,6 +13,6 @@ lara_docker_compose:
       ports:
         - '8888:8000'
       volumes:
-        - './my-project/:/app'
+        - '{{app_home}}/:/app'
       # extra_hosts:
       #   - "host.docker.internal:host-gateway"

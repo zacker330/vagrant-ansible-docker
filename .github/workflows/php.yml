@@ -61,8 +61,7 @@ jobs:
         run: zip -qq -r ${{ env.artifactName }} *
 
       - name: package devops
-        working-directory: "devops"
-        run: zip -qq -r ${{ env.devopsName }} *
+        run: zip -qq -r ${{ env.devopsName }} devops
 
       - name: create a prerelease
         id: createDraft
@@ -75,7 +74,6 @@ jobs:
           draft: false
           prerelease: true
           files: |
-            ${{ env.artifactName }}
+            ./my-project/${{ env.artifactName }}
             ${{ env.devopsName }}
 
-    

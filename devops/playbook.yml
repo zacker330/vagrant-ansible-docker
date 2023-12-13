@@ -1,8 +1,47 @@
 
-- hosts: {{ app_host | default("127.0.0.1") }}
+- hosts: webservers
   gather_facts: yes
   become: true
   vars:
+    www_group: "www-data"
+    __nginx_user: "{{www_group}}"
+    __php_fpm_pool_group: "{{www_group}}"
+
+    nginx_service_state: started
+    nginx_service_enabled: yes
+    php_enable_webserver: false
+    php_fpm_state: started
+    php_install_from_source: false
+    php_fpm_enabled_on_boot: true
+    php_enable_php_fpm: true
+    php_use_managed_ini: true
+    php_version: "8.1"
+    php_default_version_debian: "8.1"
+    php_memory_limit: "128M"
+    php_max_execution_time: "90"
+    php_upload_max_filesize: "256M"
+    php_packages: [
+      "php8.1",
+      "php8.1-fpm",
+      "php8.1-common",
+      "php8.1-curl",
+      "php8.1-mysql"
+    ]
+    php_executable: "php"
+    php_webserver_daemon: "nginx"
+    php_fpm_pools:
+      - pool_name: www
+        pool_template: www.conf.j2
+        pool_listen: "127.0.0.1:9000"
+        pool_listen_allowed_clients: "127.0.0.1"
+        pool_pm: dynamic
+        pool_pm_max_children: 5
+        pool_pm_start_servers: 2
+        pool_pm_min_spare_servers: 1
+        pool_pm_max_spare_servers: 3
+        pool_pm_max_requests: 500
+        pool_pm_status_path: /status
+
     docker_service_manage: true
     docker_service_state: started
     docker_service_enabled: true
@@ -11,13 +50,13 @@
     docker_compose_arch: "{{ ansible_architecture }}"
     docker_compose_path: /usr/local/bin/docker-compose
     # docker_compose_url: "http://192.168.0.106:8081/repository/everything/docker/2.23.2/docker-compose-linux-x86_64"
-    pip_install_packages:
+    pip_install_packages: 
+    # - name: docker-py
     - name: docker
-      version: "4.4.4"
+      version: "5.0.0"
+    - name: pyyaml
+      version: "5.3.1"
     - name: docker-compose
-      version: "1.29.2"
-    # - name: awscli
-    #   version: "1.31.11"
   roles:
     - ansible-role-pip
     - ansible-role-docker

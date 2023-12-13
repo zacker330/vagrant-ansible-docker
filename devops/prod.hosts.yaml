@@ -1,27 +1,102 @@
-all: # keys must be unique, i.e. only one 'hosts' per group
-    hosts:
-        127.0.0.1
-    vars:
+all:
+  children:
+    webservers:
+      hosts:
+        34.230.3.87
+      vars:
+        ansible_ssh_private_key_file: /Users/jack/Downloads/larasite.pem
+        ansible_ssh_user: admin
         docker_compose_home: "/apps/larasite"
-        app_user: ubuntu
-        app_group: ubuntu
+        app_user: admin
+        app_group: admin
         # 靠环境变量传递
         # lavavel_zip_path: ''
         app_home: ""
         lara_docker_compose:
-            version: '3'
-            services:
-                myapp:
-                image: docker.io/bitnami/laravel:8
-                # container_name: prod_myapp
-                mem_limit: 800M
-                mem_reservation: 128M
-                cpus: 0.8
-                restart: "always"
-                ports:
-                - '8888:8000'
-                volumes:
-                - '{{app_home}}/:/app'
-                - "{{docker_compose_home}}/logs:/app/storage/logs/"
+          version: '3'
+          services:
+            larasite:
+              image: docker.io/bitnami/laravel:8
+              # container_name: prod_myapp
+              mem_limit: 800M
+              mem_reservation: 128M
+              cpus: 0.8
+              restart: "always"
+              ports:
+              - '8888:8000'
+              volumes:
+              - '{{app_home}}/:/app'
+              - "{{docker_compose_home}}/logs:/app/storage/logs/"
                 # extra_hosts:
-                #   - "host.docker.internal:host-gateway"
+              #   - "host.docker.internal:host-gateway"
+
+        nginx_vhosts:
+          - listen: "8888"
+            server_name: "larasite.showme.codes"
+            root: "{{app_home}}/public"
+            index: "index.php index.html index.htm"
+            # error_page: ""
+            access_log: "{{app_home}}/access.log"
+            error_log: "{{app_home}}/error.log"
+            state: "present"
+            template: "{{ nginx_vhost_template }}"
+            filename: "larasite.showme.codes.conf"
+            extra_parameters: |
+              location ~ \.php$ {
+                  # fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                  #fastcgi_pass unix:/var/run/php/php8.1-fpm.pid;
+                  fastcgi_pass 127.0.0.1:9000;
+                  fastcgi_index index.php;
+                  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                  include fastcgi_params;
+              }
+        laravel_app_env:
+          APP_NAME: app
+          APP_ENV: production
+          APP_KEY: base64:CTjgv1V9Yr8rZ5aLOgZbp6lInluH6ddd
+          APP_DEBUG: false
+          APP_URL: https://app.com/
+          LOG_CHANNEL: stack
+          LOG_DEPRECATIONS_CHANNEL: 
+          LOG_LEVEL: debug
+          DB_CONNECTION: mysql
+          DB_DATABASE: forge
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USERNAME: app
+          DB_PASSWORD: "123123"
+          BROADCAST_DRIVER: log
+          CACHE_DRIVER: file
+          FILESYSTEM_DRIVER: local
+          QUEUE_CONNECTION: 
+          SESSION_DRIVER: database
+          SESSION_LIFETIME: 120
+          MEMCACHED_HOST: 
+          REDIS_HOST: 
+          REDIS_PASSWORD: 
+          REDIS_PORT: 
+          MAIL_MAILER: 
+          MAIL_HOST: 
+          MAIL_PORT: 
+          MAIL_USERNAME: 
+          MAIL_PASSWORD: 
+          MAIL_ENCRYPTION: 
+          MAIL_FROM_ADDRESS: 
+          MAIL_FROM_NAME: 
+          AWS_ACCESS_KEY_ID: 
+          AWS_SECRET_ACCESS_KEY: 
+          AWS_DEFAULT_REGION: 
+          AWS_BUCKET: 
+          AWS_USE_PATH_STYLE_ENDPOINT: 
+          PUSHER_APP_ID: 
+          PUSHER_APP_KEY: 
+          PUSHER_APP_SECRET: 
+          PUSHER_APP_CLUSTER: 
+          MIX_PUSHER_APP_KEY: 
+          MIX_PUSHER_APP_CLUSTER: 
+          WEIXINWEB_CLIENT_ID: 
+          WEIXINWEB_CLIENT_SECRET: 
+          WEIXINWEB_REDIRECT_URI: 
+          ADMIN_USER_EMAIL: 
+          ADMIN_USER_PASSWORD: 
+          FIREBASE_CREDENTIALS: resources/credentials/firebase_credentials.json

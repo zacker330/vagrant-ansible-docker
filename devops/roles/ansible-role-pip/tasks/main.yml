@@ -6,12 +6,17 @@
     - ansible_distribution_major_version|int >= 12
 
 - name: Ensure Pip is installed.
-  package:
+  ansible.builtin.apt:
     name: "{{ pip_package }}"
+    update_cache: yes
+
+- name: fix issue at installing docker-compose in debian 12.1 system. It must be run before install pip package of docker-compose
+  ansible.builtin.pip:
+    name: pyyaml==5.3.1
     state: present
 
 - name: Ensure pip_install_packages are installed.
-  pip:
+  ansible.builtin.pip:
     name: "{{ item.name | default(item) }}"
     version: "{{ item.version | default(omit) }}"
     virtualenv: "{{ item.virtualenv | default(omit) }}"

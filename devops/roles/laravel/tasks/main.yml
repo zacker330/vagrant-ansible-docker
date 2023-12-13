@@ -1,30 +1,55 @@
 ---
+- name: install unzip 
+  ansible.builtin.apt:
+    name: unzip
+
 - name: mkdir folders
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "{{app_user}}"
-    group: "{{app_group}}"
-    mode: u=rw,g=r,o=r
-    loop:
-      - "{{ docker_compose_home }}"
-      - "{{ app_home }}"
+    group: "{{www_group}}"
+    mode: u=rwx,g=rx,o=rx
+  loop:
+    - "{{ app_root_home | default('/apps')}}"
+    - "{{ docker_compose_home }}"
+    - "{{ app_home }}"
+
+- name: mkdir storage folders
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{app_user}}"
+    group: "{{www_group}}"
+    mode: u=rwx,g=rwx,o=rx
+  loop:
+    - "{{ app_home }}/storage"
 
 - name: copy laravel.zip
   ansible.builtin.copy:
     src: "{{ lavavel_zip_path }}"
     dest: "{{ app_home }}"
     owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    mode: u=rw,g=r,o=r
+    group: "{{ www_group }}"
+    mode: u=rwx,g=rwx,o=rx
 
 - name: extract laravel
   ansible.builtin.unarchive:
     src: "{{ lavavel_zip_path }}"
     dest: "{{ app_home }}"
+    owner: "{{ app_user }}"
+    group: "{{ www_group }}"
+    mode: u=rwx,g=rwx,o=rx
+
+- name: template env.j2
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{app_home}}/.env"
+    owner: "{{app_user}}"
+    group: "{{app_group}}"
+    mode: u=rw,g=r,o=r
 
 
-# tasks file for larasite
 - name: template docker-compose.yml
   ansible.builtin.template:
     src: docker-compose.yaml.j2
@@ -33,8 +58,8 @@
     group: "{{app_group}}"
     mode: u=rw,g=r,o=r
 
-- name: start services
-  docker_compose:
+- name: start services at "{{docker_compose_home}}"
+  community.docker.docker_compose:
     project_src: "{{docker_compose_home}}"
   register: output
 

@@ -29,12 +29,23 @@ lara_docker_compose:
       mem_reservation: 128M
       cpus: 0.8
       restart: "always"
+      depends_on:
+      - db
       ports:
       - '8888:8000'
       volumes:
       - '{{app_home}}/:/app'
       - "{{docker_compose_home}}/logs:/app/storage/logs/"
         # extra_hosts:
+    larasite_sql_migration:
+      image: docker.io/bitnami/laravel:8
+      mem_limit: 50M
+      cpus: 0.2
+      depends_on:
+      - db
+      command: "php artisan migrate --force"
+      volumes:
+      - '{{app_home}}/:/app'
   volumes:
     db:
       driver: local

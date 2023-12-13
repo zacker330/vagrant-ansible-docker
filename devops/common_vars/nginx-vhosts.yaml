@@ -1,0 +1,20 @@
+nginx_vhosts:
+  - listen: "8888"
+    server_name: "larasite.showme.codes"
+    root: "{{app_home}}/public"
+    index: "index.php index.html index.htm"
+    # error_page: ""
+    access_log: "{{app_home}}/access.log"
+    error_log: "{{app_home}}/error.log"
+    state: "present"
+    template: "{{ nginx_vhost_template }}"
+    filename: "larasite.showme.codes.conf"
+    extra_parameters: |
+      location ~ \.php$ {
+          # fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          #fastcgi_pass unix:/var/run/php/php8.1-fpm.pid;
+          fastcgi_pass 127.0.0.1:9000;
+          fastcgi_index index.php;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          include fastcgi_params;
+      }

@@ -12,48 +12,11 @@ all:
         # 靠环境变量传递
         # lavavel_zip_path: ''
         app_home: ""
-        lara_docker_compose:
-          version: '3'
-          services:
-            larasite:
-              image: docker.io/bitnami/laravel:8
-              # container_name: prod_myapp
-              mem_limit: 800M
-              mem_reservation: 128M
-              cpus: 0.8
-              restart: "always"
-              ports:
-              - '8888:8000'
-              volumes:
-              - '{{app_home}}/:/app'
-              - "{{docker_compose_home}}/logs:/app/storage/logs/"
-                # extra_hosts:
-              #   - "host.docker.internal:host-gateway"
-
-        nginx_vhosts:
-          - listen: "8888"
-            server_name: "larasite.showme.codes"
-            root: "{{app_home}}/public"
-            index: "index.php index.html index.htm"
-            # error_page: ""
-            access_log: "{{app_home}}/access.log"
-            error_log: "{{app_home}}/error.log"
-            state: "present"
-            template: "{{ nginx_vhost_template }}"
-            filename: "larasite.showme.codes.conf"
-            extra_parameters: |
-              location ~ \.php$ {
-                  # fastcgi_split_path_info ^(.+\.php)(/.+)$;
-                  #fastcgi_pass unix:/var/run/php/php8.1-fpm.pid;
-                  fastcgi_pass 127.0.0.1:9000;
-                  fastcgi_index index.php;
-                  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                  include fastcgi_params;
-              }
+        db_root_password: "mysql"
         laravel_app_env:
           APP_NAME: app
           APP_ENV: production
-          APP_KEY: base64:CTjgv1V9Yr8rZ5aLOgZbp6lInluH6ddd
+          APP_KEY: base64:ZXFpM2hwaTZubGhuMzBrOHlzZTA5OTBsMnkwY3R0dWw=
           APP_DEBUG: false
           APP_URL: https://app.com/
           LOG_CHANNEL: stack
@@ -61,15 +24,15 @@ all:
           LOG_LEVEL: debug
           DB_CONNECTION: mysql
           DB_DATABASE: forge
-          DB_HOST: 127.0.0.1
+          DB_HOST: db
           DB_PORT: 3306
-          DB_USERNAME: app
-          DB_PASSWORD: "123123"
+          DB_USERNAME: root
+          DB_PASSWORD: "{{ db_root_password }}"
           BROADCAST_DRIVER: log
           CACHE_DRIVER: file
           FILESYSTEM_DRIVER: local
           QUEUE_CONNECTION: 
-          SESSION_DRIVER: database
+          SESSION_DRIVER: file
           SESSION_LIFETIME: 120
           MEMCACHED_HOST: 
           REDIS_HOST: 

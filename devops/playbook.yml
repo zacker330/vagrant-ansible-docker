@@ -2,6 +2,9 @@
 - hosts: webservers
   gather_facts: yes
   become: true
+  vars_files: 
+    - common_vars/ansible-docker-compose.yaml
+    - common_vars/nginx-vhosts.yaml
   vars:
     www_group: "www-data"
     __nginx_user: "{{www_group}}"
@@ -58,6 +61,6 @@
       version: "5.3.1"
     - name: docker-compose
   roles:
-    - ansible-role-pip
-    - ansible-role-docker
+    # - ansible-role-pip
+    # - ansible-role-docker
     - laravel
